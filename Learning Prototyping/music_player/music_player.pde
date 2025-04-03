@@ -10,25 +10,26 @@
 float X, Y, Width, Height;
 //
 void setup() {
-  println("1.", X, Y, Width, Height);
+  println("1.5", 23, 1, 5, 16);
   // Display
   fullScreen();
   println(displayWidth, displayHeight);
-  int appWidth = ;
-  int appHeight = ;
+  int appWidth =displayWidth ;
+  int appHeight =displayHeight ;
   //
   println(appWidth, appHeight);
   appWidth = displayWidth;
   appHeight = displayHeight;
   println(appWidth, appHeight);
   //
-  X = appWidth*1/4;
-  Y = appHeight*2/5;
-  Width = appWidth*1/2;
-  Height = appHeight*2/5;
+  X = appWidth*2/9;
+  Y = appHeight*1/5;
+  Width = appWidth*1/16;
+  Height = appHeight*1.5/19.8;
   //
   //DIVs
   //rect(X, Y, Width, Height)
+  /*
   rect(imageX, imageY, imageWidth, imageHeight);
   rect(playX, playY, playWidth, playHeight);
   rect(pauseX, pauseY, pauseWidth, pauseHeight);
@@ -45,6 +46,7 @@ void setup() {
   rect(timeRemainingX, timeRemainingY, timeRemainingWidth, timeRemainingHeight);
   rect(songTitleX, songTitleY, songTitleWidth, songTitleHeight);
   rect(timeBarX, timeBarY, timeBarWidth, timeBarHeight);
+  */
   //
 } //End setup
 //
