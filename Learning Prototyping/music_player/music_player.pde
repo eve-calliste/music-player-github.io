@@ -1,63 +1,63 @@
-/* Purpose: draw a rectangle
+/* Purpose: draw various rectangles based on the provided diagram
    Vocabulary
    - Declaration & Initialization
    - Local Variables v Global Variables
    - Population of variables
  */
-//Library - Minim
-//
-//Global Variables
-float X, Y, Width, Height;
-//
+
+// Global Variables
+float mainRectX, mainRectY, mainRectSize;
+float longRectX, longRectY, longRectWidth, longRectHeight;
+float squareX, squareY, squareSize, squareSpacing;
+int numSquares = 13;
+
 void setup() {
-  println("1.5", 23, 1, 5, 16);
   // Display
   fullScreen();
   println(displayWidth, displayHeight);
-  int appWidth =displayWidth ;
-  int appHeight =displayHeight ;
-  //
+  int appWidth = displayWidth;
+  int appHeight = displayHeight;
   println(appWidth, appHeight);
-  appWidth = displayWidth;
-  appHeight = displayHeight;
-  println(appWidth, appHeight);
-  //
-  X = appWidth*2/9;
-  Y = appHeight*1/5;
-  Width = appWidth*1/16;
-  Height = appHeight*1.5/19.8;
-  //
-  //DIVs
-  //rect(X, Y, Width, Height)
-  /*
-  rect(imageX, imageY, imageWidth, imageHeight);
-  rect(playX, playY, playWidth, playHeight);
-  rect(pauseX, pauseY, pauseWidth, pauseHeight);
-  rect(stopX, stopY, stopWidth, stopHeight);
-  rect(fastForwardX, fastForwardY, fastForwardWidth, fastForwardHeight);
-  rect(fastRewindX, fastRewindY, fastRewindWidth, fastRewindHeight);
-  rect(muteX, muteY, muteWidth, muteHeight);
-  rect(loopOnceX, loopOnceY, loopOnceWidth, loopOnceHeight);
-  rect(loopInfiniteX, loopInfiniteY, loopInfiniteWidth, loopInfiniteHeight);
-  rect(shuffleX, shuffleY, shuffleWidth, shuffleHeight);
-  rect(nextX, nextY, nextWidth, nextHeight);
-  rect(previousX, previousY, previousWidth, previousHeight);
-  rect(songPositionX, songPositionY, songPositionWidth, songPositionHeight);
-  rect(timeRemainingX, timeRemainingY, timeRemainingWidth, timeRemainingHeight);
-  rect(songTitleX, songTitleY, songTitleWidth, songTitleHeight);
-  rect(timeBarX, timeBarY, timeBarWidth, timeBarHeight);
-  */
-  //
-} //End setup
-//
+
+  // Main rectangle (now a square) more centered
+  mainRectSize = min(appWidth, appHeight) * 0.35;
+  mainRectX = (appWidth - mainRectSize) / 2;
+  mainRectY = (appHeight * 0.10);
+
+  // Long rectangle below the main rectangle
+  longRectX = appWidth * 0.10;
+  longRectY = appHeight * 0.55;
+  longRectWidth = appWidth * 0.80;
+  longRectHeight = appHeight * 0.05;
+
+  // Calculate the size and spacing of the squares
+  float totalSpacing = appWidth * 0.10; // Total spacing reserved
+  squareSpacing = totalSpacing / (numSquares - 1); // Spacing between squares
+  squareSize = (appWidth - totalSpacing) / numSquares; // Size of each square
+  squareY = appHeight * 0.85; // Position the squares at the bottom of the screen
+
+} // End setup
+
 void draw() {
-  rect(X, Y, Width, Height); //X, Y, Width, Height
-} //End draw
-//
+  background(0); // Set the background to black
+  
+  // Draw main rectangle (now a square)
+  rect(mainRectX, mainRectY, mainRectSize, mainRectSize);
+
+  // Draw long rectangle
+  rect(longRectX, longRectY, longRectWidth, longRectHeight);
+
+  // Draw the squares
+  for (int i = 0; i < numSquares; i++) {
+    squareX = (width - numSquares * squareSize - (numSquares - 1) * squareSpacing) / 2 + i * (squareSize + squareSpacing); // Center the squares horizontally
+    rect(squareX, squareY, squareSize, squareSize);
+  }
+} // End draw
+
 void mousePressed() {
-} //End mousePressed
-//
+} // End mousePressed
+
 void keyPressed() {
-} //End keyPressed
-//
+} // End keyPressed
+
 // End Main Program
