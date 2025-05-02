@@ -1,143 +1,78 @@
-/* Purpose: draw various rectangles based on the provided diagram
- Vocabulary
- - Declaration & Initialization
- - Local Variables v Global Variables
- - Population of variables
- */
+import ddf.minim.*; // Import the Minim library
 
-// Global Variables
-float mainRectX, mainRectY, mainRectSize;
-float longRectX, longRectY, longRectWidth, longRectHeight;
-float squareX, squareY, squareSize, squareSpacing;
-int numSquares = 13;
-//
-float muteDivX, muteDivY, muteDivWidth, muteDivHeight;
-float shuffleDivX, shuffleDivY, shuffleDivWidth, shuffleDivHeight;
-float removesongfromplaylistDivX, removesongfromplaylistDivY, removesongfromplaylistDivWidth, removesongfromplaylistDivHeight;
-float previoussongDivX, previoussongDivY, previoussongDivWidth, previoussongDivHeight;
-float playDivX, playDivY, playDivWidth, playDivHeight;
-float rewindtensecondsDivX, rewindtensecondsDivY, rewindtensecondsDivWidth, rewindtensecondsDivHeight;
-float stopDivX, stopDivY, stopDivWidth, stopDivHeight;
-float fastfowardtensecondsDivX, fastfowardtensecondsDivY, fastfowardtensecondsDivWidth, fastfowardtensecondsDivHeight; 
-float pauseDivX, pauseDivY, pauseDivWidth, pauseDivHeight;
-float nextsongDivX, nextsongDivY, nextsongDivWidth, nextsongDivHeight;
-float looponceDivX, looponceDivY, looponceDivWidth, looponceDivHeight;
-float loopinfiniteDivX, loopinfiniteDivY, loopinfiniteDivWidth, loopinfiniteDivHeight;
-float menuDivX, menuDivY, menuDivWidth, menuDivHeight;
+// Variables for music and images
+Minim minim;
+AudioPlayer player;
+PImage albumArt;
+
+// Variables for the timeline bar
+float progressBarX, progressBarY, progressBarWidth, progressBarHeight;
+
 void setup() {
-  // Display
-  fullScreen();
-  println(displayWidth, displayHeight);
-  int appWidth = displayWidth;
-  int appHeight = displayHeight;
-  println(appWidth, appHeight);
+  size(800, 600); // Set the window size
 
-  // Main rectangle (now a square) more centered
-  mainRectSize = min(appWidth, appHeight) * 0.35;
-  mainRectX = (appWidth - mainRectSize) / 2;
-  mainRectY = (appHeight * 0.10);
+  // Initialize Minim and load an MP3 file
+  minim = new Minim(this);
+  player = minim.loadFile("song.mp3"); // Replace "song.mp3" with your MP3 file name
 
-  // Long rectangle below the main rectangle
-  longRectX = appWidth * 0.10;
-  longRectY = appHeight * 0.55;
-  longRectWidth = appWidth * 0.80;
-  longRectHeight = appHeight * 0.05;
+  // Load Stray Kids logo as album art
+  albumArt = loadImage("stray_kids_logo.png"); // Replace "stray_kids_logo.png" with the logo file name
 
-  /* Calculate the size and spacing of the squares
-  float totalSpacing = appWidth * 0.10; // Total spacing reserved
-  squareSpacing = totalSpacing / (numSquares - 1); // Spacing between squares
-  squareSize = (appWidth - totalSpacing) / numSquares; // Size of each square
-  squareY = appHeight * 0.85; // Position the squares at the bottom of the screen
-  */
-  
-  float boxWidth = appWidth/13;
-  muteDivX = boxWidth*0.80;
-  muteDivY = appHeight - muteDivX;
-  muteDivWidth = muteDivX;
-  muteDivHeight = muteDivX;
-shuffleDivX = 
-shuffleDivY = 
-shuffleDivWidth = 
-shuffleDivHeight = 
- removesongfromplaylistDivX = 
- removesongfromplaylistDivY = 
- removesongfromplaylistDivWidth = 
- removesongfromplaylistDivHeight = 
- previoussongDivX = 
- previoussongDivY = 
- previoussongDivWidth = 
- previoussongDivHeight = 
- playDivX = 
- playDivY = 
- playDivWidth = 
- playDivHeight = 
- rewindtensecondsDivX = 
- rewindtensecondsDivY = 
- rewindtensecondsDivWidth = 
- rewindtensecondsDivHeight = 
- stopDivX = 
- stopDivY = 
- stopDivWidth = 
- stopDivHeight = 
- fastfowardtensecondsDivX = 
- fastfowardtensecondsDivY = 
- fastfowardtensecondsDivWidth = 
- fastfowardtensecondsDivHeight = 
- pauseDivX = 
- pauseDivY = 
- pauseDivWidth = 
- pauseDivHeight = 
- nextsongDivX = 
- nextsongDivY = 
- nextsongDivWidth = 
- nextsongDivHeight = 
- looponceDivX = 
- looponceDivY = 
- looponceDivWidth = 
- looponceDivHeight = 
- loopinfiniteDivX = 
- loopinfiniteDivY = 
- loopinfiniteDivWidth = 
- loopinfiniteDivHeight = 
- menuDivX = 
- menuDivY = 
- menuDivWidth = 
- menuDivHeight = 
-  // Draw main rectangle (now a square)
-  rect(mainRectX, mainRectY, mainRectSize, mainRectSize);
-
-  // Draw long rectangle
-  rect(longRectX, longRectY, longRectWidth, longRectHeight);
-
-  // Draw the squares
-  for (int i = 0; i < numSquares; i++) {
-    squareX = (width - numSquares * squareSize - (numSquares - 1) * squareSpacing) / 2 + i * (squareSize + squareSpacing); // Center the squares horizontally
-    rect(squareX, squareY, squareSize, squareSize);
-  }
-
-  rect( muteDivX, muteDivY, muteDivWidth, muteDivHeight );
-  //rect( shuffleDivX, shuffleDivY, shuffleDivWidth, shuffleDivHeight );
-  //rect( removesongfromplaylistDivX, removesongfromplaylistDivY, removesongfromplaylistDivWidth, removesongfromplaylistDivHeight );
-  //rect( previoussongDivX, previoussongDivY, previoussongDivWidth, previoussongDivHeight );
-  //rect( playDivX, playDivY, playDivWidth, playDivHeight );
-  //rect( rewindtensecondsDivX, rewindtensecondsDivY, rewindtensecondsDivWidth, rewindtensecondsDivHeight );
-  //rect( stopDivX, stopDivY, stopDivWidth, stopDivHeight );
-  //rect( fastfowardtensecondsDivX, fastfowardtensecondsDivY, fastfowardtensecondsDivWidth, fastfowardtensecondsDivHeight );
-  //rect( pauseDivX, pauseDivY, pauseDivWidth, pauseDivHeight );
-  //rect( nextsongDivX, nextsongDivY, nextsongDivWidth, nextsongDivHeight );
-  //rect( looponceDivX, looponceDivY, looponceDivWidth, looponceDivHeight );
-  //rect( loopinfiniteDivX, loopinfiniteDivY, loopinfiniteDivWidth, loopinfiniteDivHeight );
-  //rect( menuDivX, menuDivY, menuDivWidth, menuDivHeight );
-} // End setup
+  // Set up the timeline bar
+  progressBarX = 50;
+  progressBarY = height - 50;
+  progressBarWidth = width - 100;
+  progressBarHeight = 20;
+}
 
 void draw() {
-  //background(0); // Set the background to black
-} // End draw
+  background(0); // Set the background to black
 
-void mousePressed() {
-} // End mousePressed
+  // Draw Stray Kids logo
+  if (albumArt != null) {
+    image(albumArt, width / 2 - 100, 50, 200, 200); // Center the logo
+  }
+
+  // Draw timeline bar
+  float progress = map(player.position(), 0, player.length(), 0, progressBarWidth);
+  fill(255, 0, 0); // Red color for the progress
+  rect(progressBarX, progressBarY, progress, progressBarHeight); // Draw the progress bar
+  noFill();
+  stroke(255, 0, 0); // Red color for the outline
+  rect(progressBarX, progressBarY, progressBarWidth, progressBarHeight); // Draw the outline
+
+  // Draw buttons (example: play button)
+  fill(255, 0, 0); // Red color for buttons
+  ellipse(width / 2, height - 100, 50, 50); // Example button (circle)
+  fill(0);
+  textAlign(CENTER, CENTER);
+  text("Play", width / 2, height - 100); // Label for the button
+}
 
 void keyPressed() {
-} // End keyPressed
+  if (key == ' ') { // Space bar for play/pause
+    if (player.isPlaying()) {
+      player.pause();
+      println("Music paused");
+    } else {
+      player.play();
+      println("Music playing");
+    }
+  } else if (key == 's' || key == 'S') { // Stop the music
+    player.pause();
+    player.rewind();
+    println("Music stopped");
+  } else if (key == 'r' || key == 'R') { // Rewind 10 seconds
+    player.skip(-10000);
+    println("Rewind 10 seconds");
+  } else if (key == 'f' || key == 'F') { // Fast forward 10 seconds
+    player.skip(10000);
+    println("Fast forward 10 seconds");
+  }
+}
 
-// End Main Program
+void stop() {
+  player.close();
+  minim.stop();
+  super.stop();
+}
