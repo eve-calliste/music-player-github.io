@@ -1,40 +1,78 @@
-int appWidth, appHeight;
-float squareWidth, squareHeight;
-float horizontalSpacing;  // Horizontal space between squares
-float verticalSpacing;    // Vertical space between squares
-int squaresPerRow = 13;   // Total number of squares in a row
-int squaresPerColumn = 1; // 1 row of squares at the bottom
+import ddf.minim.*; // Import the Minim library
+
+// Variables for music and images
+Minim minim;
+AudioPlayer player;
+PImage albumArt;
+
+// Variables for the timeline bar
+float progressBarX, progressBarY, progressBarWidth, progressBarHeight;
 
 void setup() {
-  // Initialize the display
-  fullScreen();
-  appWidth = displayWidth;
-  appHeight = displayHeight;
+  size(800, 600); // Set the window size
 
-  // Calculate the size of the squares (width and height)
-  squareWidth = (appWidth - (horizontalSpacing * (squaresPerRow + 1))) / squaresPerRow; 
-  squareHeight = appHeight * 0.10; // Set square height (adjustable)
+  // Initialize Minim and load an MP3 file
+  minim = new Minim(this);
+  player = minim.loadFile("song.mp3"); // Replace "song.mp3" with your MP3 file name
 
-  // Set horizontal and vertical spacing between squares
-  horizontalSpacing = 20; // Adjust this for horizontal gap between squares
-  verticalSpacing = 20;   // Adjust this for vertical gap between rows (optional)
+  // Load Stray Kids logo as album art
+  albumArt = loadImage("data/stray_kids_logo.png"); // Replace "stray_kids_logo.png" with the logo file name
 
-  // Calculate Y position for the squares (near the bottom of the screen)
-  float squareY = appHeight - squareHeight - verticalSpacing;
-
-  // Draw squares
-  noFill();
-  stroke(255);  // Set the color to white for the square borders
-
-  // Loop to draw the squares in the row
-  for (int i = 0; i < squaresPerRow; i++) {
-    float squareX = horizontalSpacing + i * (squareWidth + horizontalSpacing); // Calculate X position with spacing
-    rect(squareX, squareY, squareWidth, squareHeight);  // Draw the square
-  }
+  // Set up the timeline bar
+  progressBarX = 50;
+  progressBarY = height - 50;
+  progressBarWidth = width - 100;
+  progressBarHeight = 20;
 }
 
 void draw() {
-  // Your animation or logic can be added here if you want to change the squares over time
+  background(0); // Set the background to black
+
+  // Draw Stray Kids logo
+  if (albumArt != null) {
+    image(albumArt, width / 2 - 100, 50, 200, 200); // Center the logo
+  }
+
+  // Draw timeline bar
+  float progress = map(player.position(), 0, player.length(), 0, progressBarWidth);
+  fill(255, 0, 0); // Red color for the progress
+  rect(progressBarX, progressBarY, progress, progressBarHeight); // Draw the progress bar
+  noFill();
+  stroke(255, 0, 0); // Red color for the outline
+  rect(progressBarX, progressBarY, progressBarWidth, progressBarHeight); // Draw the outline
+
+  // Draw buttons (example: play button)
+  fill(255, 0, 0); // Red color for buttons
+  ellipse(width / 2, height - 100, 50, 50); // Example button (circle)
+  fill(0);
+  textAlign(CENTER, CENTER);
+  text("Play", width / 2, height - 100); // Label for the button
 }
 
-void mousePressed
+void keyPressed() {
+  if (key == ' ') { // Space bar for play/pause
+    if (player.isPlaying()) {
+      player.pause();
+      println("Music paused");
+    } else {
+      player.play();
+      println("Music playing");
+    }
+  } else if (key == 's' || key == 'S') { // Stop the music
+    player.pause();
+    player.rewind();
+    println("Music stopped");
+  } else if (key == 'r' || key == 'R') { // Rewind 10 seconds
+    player.skip(-10000);
+    println("Rewind 10 seconds");
+  } else if (key == 'f' || key == 'F') { // Fast forward 10 seconds
+    player.skip(10000);
+    println("Fast forward 10 seconds");
+  }
+}
+
+void stop() {
+  player.close();
+  minim.stop();
+  super.stop();
+}
