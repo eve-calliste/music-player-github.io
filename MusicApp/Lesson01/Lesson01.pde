@@ -1,83 +1,90 @@
-import ddf.minim.*;
-import ddf.minim.analysis.*;
-import ddf.minim.effects.*;
-import ddf.minim.signals.*;
-import ddf.minim.spi.*;
-import ddf.minim.ugens.*;
+import ddf.minim.*; // Import the Minim library
 
-// Variables for music and images
+// Variables for music
 Minim minim;
-AudioPlayer player;
-PImage albumArt;
-
-// Variables for the timeline bar
-float progressBarX, progressBarY, progressBarWidth, progressBarHeight;
+AudioPlayer player1, player2, player3;
+AudioPlayer currentPlayer; // Tracks the currently playing song
 
 void setup() {
   size(800, 600); // Set the window size
 
-  // Initialize Minim and load an MP3 file
+  // Initialize Minim and load MP3 files
   minim = new Minim(this);
-  player = minim.loadFile("[SPOTDOWNLOADER.COM] MEGAVERSE.mp3"); // Replace "downloaded_song.mp3" with the actual file name
 
-  // Load album art
-  albumArt = loadImage("stray_kids_logo.png"); // Replace "downloaded_album_art.png" with the actual file name
+  player1 = minim.loadFile("[SPOTDOWNLOADER.COM] MEGAVERSE.mp3");
+  if (player1 == null) {
+    println("Error: Could not load MEGAVERSE.mp3");
+  }
 
-  // Set up the timeline bar
-  progressBarX = 50;
-  progressBarY = height - 50;
-  progressBarWidth = width - 100;
-  progressBarHeight = 20;
+  player2 = minim.loadFile("[SPOTDOWNLOADER.COM] TOPLINE (Feat. Tiger JK) (1).mp3");
+  if (player2 == null) {
+    println("Error: Could not load TOPLINE.mp3");
+  }
+
+  player3 = minim.loadFile("[SPOTDOWNLOADER.COM] VENOM.mp3");
+  if (player3 == null) {
+    println("Error: Could not load VENOM.mp3");
+  }
+
+  currentPlayer = player1; // Set the default player
 }
 
 void draw() {
   background(0); // Set the background to black
-
-  // Draw album art
-  if (albumArt != null) {
-    image(albumArt, width / 2 - 100, 50, 200, 200); // Center the album art
-  }
-
-  // Draw timeline bar
-  float progress = map(player.position(), 0, player.length(), 0, progressBarWidth);
-  fill(255, 0, 0); // Red color for the progress
-  rect(progressBarX, progressBarY, progress, progressBarHeight); // Draw the progress bar
-  noFill();
-  stroke(255, 0, 0); // Red color for the outline
-  rect(progressBarX, progressBarY, progressBarWidth, progressBarHeight); // Draw the outline
-
-  // Draw buttons (example: play button)
-  fill(255, 0, 0); // Red color for buttons
-  ellipse(width / 2, height - 100, 50, 50); // Example button (circle)
-  fill(0);
-  textAlign(CENTER, CENTER);
-  text("Play", width / 2, height - 100); // Label for the button
+  fill(255); // White text
+  textSize(16);
+  text("Press 1 to play MEGAVERSE", 10, 20);
+  text("Press 2 to play TOPLINE", 10, 40);
+  text("Press 3 to play VENOM", 10, 60);
+  text("Press SPACE to pause/resume", 10, 80);
+  text("Press S to stop", 10, 100);
 }
 
 void keyPressed() {
-  if (key == ' ') { // Space bar for play/pause
-    if (player.isPlaying()) {
-      player.pause();
+  if (key == '1') {
+    switchPlayer(player1);
+    println("Playing MEGAVERSE");
+  } else if (key == '2') {
+    switchPlayer(player2);
+    println("Playing TOPLINE");
+  } else if (key == '3') {
+    switchPlayer(player3);
+    println("Playing VENOM");
+  } else if (key == ' ') {
+    if (currentPlayer != null && currentPlayer.isPlaying()) {
+      currentPlayer.pause();
       println("Music paused");
-    } else {
-      player.play();
+    } else if (currentPlayer != null) {
+      currentPlayer.play();
       println("Music playing");
     }
-  } else if (key == 's' || key == 'S') { // Stop the music
-    player.pause();
-    player.rewind();
-    println("Music stopped");
-  } else if (key == 'r' || key == 'R') { // Rewind 10 seconds
-    player.skip(-10000);
-    println("Rewind 10 seconds");
-  } else if (key == 'f' || key == 'F') { // Fast forward 10 seconds
-    player.skip(10000);
-    println("Fast forward 10 seconds");
+  } else if (key == 's' || key == 'S') {
+    if (currentPlayer != null) {
+      currentPlayer.pause();
+      currentPlayer.rewind();
+      println("Music stopped");
+    }
+  }
+}
+
+void switchPlayer(AudioPlayer newPlayer) {
+  if (currentPlayer != null) {
+    currentPlayer.pause();
+    currentPlayer.rewind();
+  }
+
+  if (newPlayer != null) {
+    currentPlayer = newPlayer;
+    currentPlayer.play();
+  } else {
+    println("Error: newPlayer is null");
   }
 }
 
 void stop() {
-  player.close();
+  if (player1 != null) player1.close();
+  if (player2 != null) player2.close();
+  if (player3 != null) player3.close();
   minim.stop();
   super.stop();
 }
