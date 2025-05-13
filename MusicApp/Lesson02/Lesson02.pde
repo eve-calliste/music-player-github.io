@@ -20,7 +20,7 @@ void setup() {
   albumArt = loadImage("stray_kids_logo.png"); // Replace with your album art file
 
   // Load the favicon substitute
-  favicon = loadImage(""); // Replace with your updated file path
+  favicon = loadImage("agshadowplayerlogo.png"); // Replace with your updated file path
 
   // Set up the timeline bar
   progressBarX = 50;
@@ -142,6 +142,12 @@ void keyPressed() {
   } else if (key == 'f' || key == 'F') { // Fast forward 10 seconds
     player.skip(10000);
     println("Fast forward 10 seconds");
+  } else if (key == 'l' || key == 'L') { // Loop once
+    player.loop(1);
+    println("Looping once");
+  } else if (key == 'i' || key == 'I') { // Loop infinitely
+    player.loop();
+    println("Looping infinitely");
   }
 }
 
