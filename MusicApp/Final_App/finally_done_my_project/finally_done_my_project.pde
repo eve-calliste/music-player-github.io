@@ -63,7 +63,7 @@ void draw() {
 
   // Draw the favicon substitute in the top-left corner
   if (favicon != null) {
-    image(favicon, 10, 10, 300, 300); // Display the favicon at (10, 10) with a size of 32x32 pixels
+    image(favicon, 10, 10, 330, 330); // Display the favicon at (10, 10) with a size of 32x32 pixels
   }
 
   // Draw album art
