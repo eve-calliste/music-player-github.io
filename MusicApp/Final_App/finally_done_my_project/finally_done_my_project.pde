@@ -68,7 +68,7 @@ void draw() {
 
   // Draw album art
   if (albumArt != null) {
-    image(albumArt, width / 2 - 100, 50, 200, 200); // Center the album art
+    image(albumArt, width / 2 - 400, 50, 800, 700); // Center the album art
   }
 
   // Draw the timeline bar
