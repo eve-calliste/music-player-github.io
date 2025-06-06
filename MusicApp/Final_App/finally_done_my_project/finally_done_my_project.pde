@@ -165,35 +165,52 @@ void drawButtonIcon(int i, int x, int y) {
   translate(x + 50, y + 25); // Center icon in button
 
   switch(i) {
-    case 0: // Mute - speaker with slash
-      // Speaker
-      fill(255, 0, 0);
-      stroke(255, 0, 0);
-      strokeWeight(2);
-      beginShape();
-      vertex(-22, -12);
-      vertex(-10, -12);
-      vertex(0, -22);
-      vertex(0, 22);
-      vertex(-10, 12);
-      vertex(-22, 12);
-      endShape(CLOSE);
-      // Slash
-      stroke(0);
-      strokeWeight(5);
-      line(-25, -18, 25, 18);
-      break;
+        case 0: // Mute button: speaker, slash if muted, sound waves if not
+  boolean isMuted = false;
+  AudioPlayer p = null;
+  if (players != null && currentSong >= 0 && currentSong < players.length) {
+    p = players[currentSong];
+    if (p != null && p.getGain() <= -80) isMuted = true;
+  }
 
+  // --- Always draw the speaker base and cone in RED ---
+  fill(255, 0, 0); // RED
+  noStroke();
+  rectMode(CENTER);
+  rect(-15, 0, 9, 18, 2);
+
+  fill(255, 0, 0); // RED
+  noStroke();
+  float coneW = 19;
+  float coneH = 18;
+  triangle(
+    -15 + 9, -coneH/2,
+    10, 0,
+    -15 + 9, coneH/2
+  );
+
+  // --- Draw mute slash or sound waves ---
+  if (isMuted) {
+    stroke(255, 0, 0);
+    strokeWeight(3.5);
+    line(-22, -12, 22, 12);
+  } else {
+    noFill();
+    stroke(255, 0, 0); // RED sound waves
+    strokeWeight(1.7);
+    arc(13, 0, 13, 13, -PI/3, PI/3);
+    arc(19, 0, 20, 20, -PI/3, PI/3);
+  }
+  rectMode(CORNER);
+  break;
     case 1: // Shuffle - wide X with arrow tips
       stroke(255, 0, 0);
       strokeWeight(7);
       noFill();
       float w = 22; // half-width
       float h = 10; // half-height
-      // Main X lines
       line(-w, -h, w, h);
       line(-w, h, w, -h);
-      // Arrow tips for each end (8 total)
       float arrLen = 12;
       float arrAng = PI/6;
       drawArrowTip(-w, -h, w, h, arrLen, arrAng, 0);
@@ -212,11 +229,9 @@ void drawButtonIcon(int i, int x, int y) {
       break;
 
     case 3: // Previous - bar and left triangle
-      // Bar
       fill(255, 0, 0);
       noStroke();
       rect(-25, -15, 8, 30, 3);
-      // Triangle
       fill(255, 0, 0);
       triangle(15, -15, 15, 15, -10, 0);
       break;
@@ -227,32 +242,47 @@ void drawButtonIcon(int i, int x, int y) {
       triangle(-12, -20, -12, 20, 20, 0);
       break;
 
-    case 5: // Rewind 10s - circle arrow with "10" (left)
-      fill(255, 0, 0);
-      ellipse(0, 0, 44, 44);
-      stroke(0);
-      strokeWeight(3);
-      noFill();
-      arc(0, 0, 34, 34, -PI - QUARTER_PI, QUARTER_PI);
-      // Arrowhead (left)
-      float arrowAngleL = -PI - QUARTER_PI;
-      float arrowRadiusL = 17;
-      float axL = cos(arrowAngleL) * arrowRadiusL;
-      float ayL = sin(arrowAngleL) * arrowRadiusL;
-      float angle1L = arrowAngleL + PI/5;
-      float angle2L = arrowAngleL - PI/5;
-      float lenL = 8;
-      line(axL, ayL, axL + cos(angle1L) * lenL, ayL + sin(angle1L) * lenL);
-      line(axL, ayL, axL + cos(angle2L) * lenL, ayL + sin(angle2L) * lenL);
-      // "10"
+   
+              case 5: // Rewind 10s - left-facing arc with arrowhead and "10"
+      pushMatrix();
+        scale(-1, 1); // Mirror horizontally to face left
+
+        // Use unique variable names to avoid conflicts
+        float arcDiameterR = 36;
+        float arcRadiusR = arcDiameterR / 2;
+        float startDegR = 30;
+        float endDegR = 330;
+        float startAngleR = radians(startDegR);
+        float endAngleR = radians(endDegR);
+
+        // Draw the arc
+        stroke(255, 0, 0);
+        strokeWeight(4);
+        noFill();
+        arc(0, 0, arcDiameterR, arcDiameterR, startAngleR, endAngleR);
+
+        // Draw the arrowhead at the end (after flip, this is left side)
+        float arrowTipAngleR = endAngleR;
+        float arrowTipXR = cos(arrowTipAngleR) * arcRadiusR;
+        float arrowTipYR = sin(arrowTipAngleR) * arcRadiusR;
+        float arrowSizeR = 8;
+        float tangentAngleR = arrowTipAngleR + HALF_PI;
+        float angleOffsetR = radians(30);
+        float arrowAngle1R = tangentAngleR + angleOffsetR;
+        float arrowAngle2R = tangentAngleR - angleOffsetR;
+        stroke(255, 0, 0);
+        line(arrowTipXR, arrowTipYR, arrowTipXR - arrowSizeR * cos(arrowAngle1R), arrowTipYR - arrowSizeR * sin(arrowAngle1R));
+        line(arrowTipXR, arrowTipYR, arrowTipXR - arrowSizeR * cos(arrowAngle2R), arrowTipYR - arrowSizeR * sin(arrowAngle2R));
+      popMatrix();
+
+      // Draw "10" in the middle (unflipped)
       noStroke();
-      fill(0);
+      fill(255, 0, 0);
       textSize(15);
       textAlign(CENTER, CENTER);
       text("10", 0, 0);
       textSize(16);
       break;
-
     case 6: // Stop - square
       fill(255, 0, 0);
       stroke(255, 0, 0);
@@ -261,26 +291,41 @@ void drawButtonIcon(int i, int x, int y) {
       rectMode(CORNER);
       break;
 
-    case 7: // FF 10s - circle arrow with "10" (right)
-      fill(255, 0, 0);
-      ellipse(0, 0, 44, 44);
-      stroke(0);
-      strokeWeight(3);
+    case 7: // FF 10s - right-facing arc with arrowhead and "10"
+      // Outer blank circle
       noFill();
-      arc(0, 0, 34, 34, -QUARTER_PI, PI + QUARTER_PI);
-      // Arrowhead (right)
-      float arrowAngleR = QUARTER_PI;
-      float arrowRadiusR = 17;
-      float axR = cos(arrowAngleR) * arrowRadiusR;
-      float ayR = sin(arrowAngleR) * arrowRadiusR;
-      float angle1R = arrowAngleR + PI/5;
-      float angle2R = arrowAngleR - PI/5;
-      float lenR = 8;
-      line(axR, ayR, axR + cos(angle1R) * lenR, ayR + sin(angle1R) * lenR);
-      line(axR, ayR, axR + cos(angle2R) * lenR, ayR + sin(angle2R) * lenR);
-      // "10"
+      stroke(255, 0, 0);
+      strokeWeight(4);
+      //ellipse(0, 0, 44, 44);
+
+      // Arc (right-facing, red)
+      stroke(255, 0, 0);
+      strokeWeight(4);
+      noFill();
+      float arcDiameter = 36;
+      float arcRadius = arcDiameter / 2;
+      float startDeg = 30;
+      float endDeg = 330;
+      float startAngle = radians(startDeg);
+      float endAngle = radians(endDeg);
+      arc(0, 0, arcDiameter, arcDiameter, startAngle, endAngle);
+
+      // Arrowhead at end of arc (330°)
+      float arrowTipAngle = endAngle;
+      float arrowTipX = cos(arrowTipAngle) * arcRadius;
+      float arrowTipY = sin(arrowTipAngle) * arcRadius;
+      float arrowSize = 8;
+      float tangentAngle = arrowTipAngle + HALF_PI;
+      float angleOffset = radians(30);
+      float arrowAngle1 = tangentAngle + angleOffset;
+      float arrowAngle2 = tangentAngle - angleOffset;
+      stroke(255, 0, 0);
+      line(arrowTipX, arrowTipY, arrowTipX - arrowSize * cos(arrowAngle1), arrowTipY - arrowSize * sin(arrowAngle1));
+      line(arrowTipX, arrowTipY, arrowTipX - arrowSize * cos(arrowAngle2), arrowTipY - arrowSize * sin(arrowAngle2));
+
+      // "10" in bright red in the center
       noStroke();
-      fill(0);
+      fill(255, 0, 0);
       textSize(15);
       textAlign(CENTER, CENTER);
       text("10", 0, 0);
@@ -297,84 +342,131 @@ void drawButtonIcon(int i, int x, int y) {
     case 9: // Next - right triangle and bar
       fill(255, 0, 0);
       noStroke();
-      // Triangle
       triangle(-15, -15, -15, 15, 10, 0);
-      // Bar
       rect(12, -15, 8, 30, 3);
       break;
 
-    case 10: // Loop 1 - circle, two arrows, "1"
-      fill(255, 0, 0);
+        case 10: // Loop 1 - two arcs with arrowheads and "1"
+      // Parameters for scaling the icon to fit the button
+      float arcDiameterL = 32;
+      float radiusL = arcDiameterL / 2;
+      float topOffsetL = -7;
+      float bottomOffsetL = 7;
+      float arrowSizeL = 5;
+
+      // Top arc (downward)
+      pushMatrix();
+        translate(0, topOffsetL);
+        noFill();
+        stroke(255, 0, 0);
+        strokeWeight(3);
+        arc(0, 0, arcDiameterL, arcDiameterL, PI, TWO_PI);
+      popMatrix();
+
+      // Bottom arc (upward)
+      pushMatrix();
+        translate(0, bottomOffsetL);
+        noFill();
+        stroke(255, 0, 0);
+        strokeWeight(3);
+        arc(0, 0, arcDiameterL, arcDiameterL, 0, PI);
+      popMatrix();
+
+      // Arrowheads for top arc (pointing up)
+      float topLeftX = cos(PI) * radiusL;
+      float topLeftY = sin(PI) * radiusL + topOffsetL;
+      float topRightX = cos(TWO_PI) * radiusL;
+      float topRightY = sin(TWO_PI) * radiusL + topOffsetL;
       stroke(255, 0, 0);
-      ellipse(0, 0, 44, 44);
-      // Loop arrows
-      stroke(0);
       strokeWeight(3);
-      noFill();
-      arc(0, 0, 36, 36, PI + QUARTER_PI, TWO_PI - QUARTER_PI);
-      arc(0, 0, 36, 36, -QUARTER_PI, PI - QUARTER_PI);
-      // Arrowheads
-      float angleA = PI + QUARTER_PI;
-      float r = 18;
-      float ax = cos(angleA) * r;
-      float ay = sin(angleA) * r;
-      float arrowLen = 8;
-      float arrA1 = angleA + PI/5;
-      float arrA2 = angleA - PI/5;
-      line(ax, ay, ax + cos(arrA1) * arrowLen, ay + sin(arrA1) * arrowLen);
-      line(ax, ay, ax + cos(arrA2) * arrowLen, ay + sin(arrA2) * arrowLen);
-      float angleB = -QUARTER_PI;
-      float bx = cos(angleB) * r;
-      float by = sin(angleB) * r;
-      float arrB1 = angleB + PI/5;
-      float arrB2 = angleB - PI/5;
-      line(bx, by, bx + cos(arrB1) * arrowLen, by + sin(arrB1) * arrowLen);
-      line(bx, by, bx + cos(arrB2) * arrowLen, by + sin(arrB2) * arrowLen);
-      // "1"
+      // Left
+      line(topLeftX, topLeftY, topLeftX - arrowSizeL/2, topLeftY - arrowSizeL);
+      line(topLeftX, topLeftY, topLeftX + arrowSizeL/2, topLeftY - arrowSizeL);
+      // Right
+      line(topRightX, topRightY, topRightX - arrowSizeL/2, topRightY - arrowSizeL);
+      line(topRightX, topRightY, topRightX + arrowSizeL/2, topRightY - arrowSizeL);
+
+      // Arrowheads for bottom arc (pointing down)
+      float botLeftX = cos(PI) * radiusL;
+      float botLeftY = sin(PI) * radiusL + bottomOffsetL;
+      float botRightX = cos(0) * radiusL;
+      float botRightY = sin(0) * radiusL + bottomOffsetL;
+      // Left
+      line(botLeftX, botLeftY, botLeftX - arrowSizeL/2, botLeftY + arrowSizeL);
+      line(botLeftX, botLeftY, botLeftX + arrowSizeL/2, botLeftY + arrowSizeL);
+      // Right
+      line(botRightX, botRightY, botRightX - arrowSizeL/2, botRightY + arrowSizeL);
+      line(botRightX, botRightY, botRightX + arrowSizeL/2, botRightY + arrowSizeL);
+
+      // Centered "1"
       noStroke();
-      fill(0);
-      textSize(18);
+      fill(255, 0, 0);
+      textSize(13);
       textAlign(CENTER, CENTER);
       text("1", 0, 0);
       textSize(16);
       break;
 
-    case 11: // Loop ∞ - circle, two arrows, "∞"
-      fill(255, 0, 0);
+        case 11: // Loop ∞ - two arcs with arrowheads and "∞"
+      // Parameters for scaling the icon to fit the button
+      float arcDiameterInf = 32;
+      float radiusInf = arcDiameterInf / 2;
+      float topOffsetInf = -7;
+      float bottomOffsetInf = 7;
+      float arrowSizeInf = 5;
+
+      // Top arc (downward)
+      pushMatrix();
+        translate(0, topOffsetInf);
+        noFill();
+        stroke(255, 0, 0);
+        strokeWeight(3);
+        arc(0, 0, arcDiameterInf, arcDiameterInf, PI, TWO_PI);
+      popMatrix();
+
+      // Bottom arc (upward)
+      pushMatrix();
+        translate(0, bottomOffsetInf);
+        noFill();
+        stroke(255, 0, 0);
+        strokeWeight(3);
+        arc(0, 0, arcDiameterInf, arcDiameterInf, 0, PI);
+      popMatrix();
+
+      // Arrowheads for top arc (pointing up)
+      float topLeftXInf = cos(PI) * radiusInf;
+      float topLeftYInf = sin(PI) * radiusInf + topOffsetInf;
+      float topRightXInf = cos(TWO_PI) * radiusInf;
+      float topRightYInf = sin(TWO_PI) * radiusInf + topOffsetInf;
       stroke(255, 0, 0);
-      ellipse(0, 0, 44, 44);
-      // Loop arrows
-      stroke(0);
       strokeWeight(3);
-      noFill();
-      arc(0, 0, 36, 36, PI + QUARTER_PI, TWO_PI - QUARTER_PI);
-      arc(0, 0, 36, 36, -QUARTER_PI, PI - QUARTER_PI);
-      // Arrowheads
-      float rLoop = 18; // <-- FIX: declare r for this case
-      float angleALoop = PI + QUARTER_PI;
-      float axLoop = cos(angleALoop) * rLoop;
-      float ayLoop = sin(angleALoop) * rLoop;
-      float arrowLenLoop = 8;
-      float arrA1Loop = angleALoop + PI/5;
-      float arrA2Loop = angleALoop - PI/5;
-      line(axLoop, ayLoop, axLoop + cos(arrA1Loop) * arrowLenLoop, ayLoop + sin(arrA1Loop) * arrowLenLoop);
-      line(axLoop, ayLoop, axLoop + cos(arrA2Loop) * arrowLenLoop, ayLoop + sin(arrA2Loop) * arrowLenLoop);
-      float angleBLoop = -QUARTER_PI;
-      float bxLoop = cos(angleBLoop) * rLoop;
-      float byLoop = sin(angleBLoop) * rLoop;
-      float arrB1Loop = angleBLoop + PI/5;
-      float arrB2Loop = angleBLoop - PI/5;
-      line(bxLoop, byLoop, bxLoop + cos(arrB1Loop) * arrowLenLoop, byLoop + sin(arrB1Loop) * arrowLenLoop);
-      line(bxLoop, byLoop, bxLoop + cos(arrB2Loop) * arrowLenLoop, byLoop + sin(arrB2Loop) * arrowLenLoop);
-      // "∞"
+      // Left
+      line(topLeftXInf, topLeftYInf, topLeftXInf - arrowSizeInf/2, topLeftYInf - arrowSizeInf);
+      line(topLeftXInf, topLeftYInf, topLeftXInf + arrowSizeInf/2, topLeftYInf - arrowSizeInf);
+      // Right
+      line(topRightXInf, topRightYInf, topRightXInf - arrowSizeInf/2, topRightYInf - arrowSizeInf);
+      line(topRightXInf, topRightYInf, topRightXInf + arrowSizeInf/2, topRightYInf - arrowSizeInf);
+
+      // Arrowheads for bottom arc (pointing down)
+      float botLeftXInf = cos(PI) * radiusInf;
+      float botLeftYInf = sin(PI) * radiusInf + bottomOffsetInf;
+      float botRightXInf = cos(0) * radiusInf;
+      float botRightYInf = sin(0) * radiusInf + bottomOffsetInf;
+      // Left
+      line(botLeftXInf, botLeftYInf, botLeftXInf - arrowSizeInf/2, botLeftYInf + arrowSizeInf);
+      line(botLeftXInf, botLeftYInf, botLeftXInf + arrowSizeInf/2, botLeftYInf + arrowSizeInf);
+      // Right
+      line(botRightXInf, botRightYInf, botRightXInf - arrowSizeInf/2, botRightYInf + arrowSizeInf);
+      line(botRightXInf, botRightYInf, botRightXInf + arrowSizeInf/2, botRightYInf + arrowSizeInf);
+
+      // Centered "∞"
       noStroke();
-      fill(0);
-      textSize(20);
+      fill(255, 0, 0);
+      textSize(15);
       textAlign(CENTER, CENTER);
-      text("∞", 0, 1);
+      text("∞", 0, 0);
       textSize(16);
       break;
-
     case 12: // Menu - three rectangles (hamburger)
       fill(255, 0, 0);
       noStroke();
@@ -391,7 +483,6 @@ void drawButtonIcon(int i, int x, int y) {
 
 // Draws an arrow tip at the end of a line segment from (x1,y1) to (x2,y2)
 void drawArrowTip(float x1, float y1, float x2, float y2, float arrLen, float arrAng, int colorOverride) {
-  // colorOverride is unused, but kept for signature compatibility
   float angle = atan2(y2 - y1, x2 - x1);
   float ax = x2;
   float ay = y2;
@@ -488,7 +579,6 @@ void handleButtonAction(int idx) {
 
 void keyPressed() {
   AudioPlayer p = players[currentSong];
-  // Song select keybinds
   if (key == '1') {
     switchSong(0);
     return;
@@ -499,7 +589,6 @@ void keyPressed() {
     switchSong(2);
     return;
   }
-  // 13 button keybinds
   for (int i = 0; i < buttonKeybinds.length; i++) {
     if (key == buttonKeybinds[i] || key == Character.toUpperCase(buttonKeybinds[i])) {
       handleButtonAction(i);
